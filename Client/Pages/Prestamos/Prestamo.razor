@@ -1,0 +1,75 @@
+﻿@page "/Prestamo"
+@using Actividad18.Shared.Models;
+@inject NavigationManager a
+@inject HttpClient http
+
+<h2>Lista de Prestamos</h2>
+
+
+
+
+<button class="btn btn-success" @onclick=nuevousuario><span>Nuevo usuario</span></button>
+@if (elLibro == null)
+{
+    <h2>Cargando...</h2>
+}else if (elLibro.Count == 0)
+{
+    <h2>Sin existencia de Prestamos</h2>
+}
+else
+{
+    <table class="table table-success table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Id del Libro</th>
+                <th>Fecha Prestamo</th>
+                <th>Fecha Devolucion</th>
+                <th>UsuariosId</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var u in elLibro)
+            {
+                <tr>
+                    <td>@u.Id</td>
+                    <td>@u.LibroId</td>
+                    <td>@u.FechaPresta</td>
+                    <td>@u.FechaDevop</td>
+                    <td>@u.UsuariosId</td>
+                    <td>
+                        <div>
+                            <button class="btn btn-warning" @onclick="(()=>Edit(Convert.ToInt32(u.Id)))">Editar</button>
+                            <button class="btn btn-danger" @onclick="(()=>delet(u))">Eliminar</button>
+                        </div>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Prestamos> elLibro = new List<Prestamos>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        elLibro = await http.GetFromJsonAsync<List<Prestamos>>("api/Prestamos");
+    }
+
+    public void nuevousuario()
+    {
+        a.NavigateTo("/Prestamos/Nuevo");
+    }
+    private void Edit(int i)
+    {
+        a.NavigateTo($"/Prestamos/Edit/{i}");
+    }
+    public async Task delet(Prestamos pres)
+    {
+        await http.DeleteAsync($"api/Prestamos/{pres.Id}");
+        elLibro.Remove(pres);
+    }
+}

@@ -1,0 +1,54 @@
+﻿@page "/Libro/Edit/{id:int}"
+@inject HttpClient http
+@inject NavigationManager a
+@using Actividad18.Shared.Models
+
+<h1>Editar Libro</h1>
+<EditForm Model="elLibro" OnValidSubmit="edit">
+    <DataAnnotationsValidator />
+
+    <div class="input-group input-group-sm mb-3">
+        <label for="txtTitulo" class="form-label">Titulo</label>
+        <InputText id="txtTitulo" class="form-control" @bind-Value="elLibro.titulo" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="txtAutor" class="form-label">Autor</label>
+        <InputText id="txtAutor" class="form-control" @bind-Value="elLibro.autor" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="dtFecha" class="form-label">Fecha</label>
+        <InputDate id="dtFecha" class="form-control" @bind-Value="elLibro.Fecha" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="txtISBN" class="form-label">ISBN</label>
+        <InputText id="txtISBN" class="form-control" @bind-Value="elLibro.ISBN" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="numdisponible" class="form-label">Disponibles</label>
+        <InputNumber id="numdisponible" class="form-control" @bind-Value="elLibro.disponible" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="numPrestamosId" class="form-label">Id del Prestamo</label>
+        <InputNumber id="numPrestamosId" class="form-control" @bind-Value="elLibro.PrestamosId" />
+    </div>
+    <button type="submit" class="btn btn-success">Guardar</button>
+</EditForm>
+
+
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+    private Libro elLibro = new Libro();
+
+    protected override async Task OnInitializedAsync()
+    {
+        elLibro = await http.GetFromJsonAsync<Libro>($"api/Libros/{id}");
+    }
+
+    private async void edit()
+    {
+        await http.PutAsJsonAsync($"api/Libros/{id}", elLibro);
+        a.NavigateTo("/Libro");
+    }
+}

@@ -1,0 +1,78 @@
+﻿@page "/Libro"
+@using Actividad18.Shared.Models;
+@inject NavigationManager a
+@inject HttpClient http
+
+<h2>Lista de Libros</h2>
+
+
+
+
+<button class="btn btn-success" @onclick=nuevousuario><span>Nuevo usuario</span></button>
+@if (elLibro == null)
+{
+    <h2>Cargando...</h2>
+}else if (elLibro.Count == 0)
+{
+    <h2>Sin existencia de Libros</h2>
+}
+else
+{
+    <table class="table table-success table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Titulo</th>
+                <th>Autor</th>
+                <th>Fecha</th>
+                <th>ISBN</th>
+                <th>disponible</th>
+                <th>Id del Prestamo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var u in elLibro)
+            {
+                <tr>
+                    <td>@u.Id</td>
+                    <td>@u.titulo</td>
+                    <td>@u.autor</td>
+                    <td>@u.Fecha</td>
+                    <td>@u.disponible</td>
+                    <td>@u.PrestamosId</td>
+                    <td>
+                        <div>
+                            <button class="btn btn-warning" @onclick="(()=>Edit(Convert.ToInt32(u.Id)))">Editar</button>
+                            <button class="btn btn-danger" @onclick="(()=>delet(u))">Eliminar</button>
+                        </div>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Libro> elLibro = new List<Libro>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        elLibro = await http.GetFromJsonAsync<List<Libro>>("api/Libros");
+    }
+
+    public void nuevousuario()
+    {
+        a.NavigateTo("/Libro/Nuevo");
+    }
+    private void Edit(int i)
+    {
+        a.NavigateTo($"/Libro/Edit/{i}");
+    }
+    public async Task delet(Libro libro)
+    {
+        await http.DeleteAsync($"api/Libros/{libro.Id}");
+        elLibro.Remove(libro);
+    }
+}

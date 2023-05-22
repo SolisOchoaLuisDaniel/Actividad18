@@ -1,0 +1,73 @@
+﻿@page "/Usuario"
+@using Actividad18.Shared.Models;
+@inject NavigationManager a
+@inject HttpClient http
+
+<h2>Lista de usuarios</h2>
+
+
+
+
+<button class="btn btn-success" @onclick=nuevousuario><span>Nuevo usuario</span></button>
+@if (elusuario == null)
+{
+    <h2>Cargando...</h2>
+}else if (elusuario.Count == 0)
+{
+    <h2>Sin existencia de usuarios</h2>
+}
+else
+{
+    <table class="table table-success table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Telefono</th>
+                <th>Email</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var u in elusuario)
+            {
+                <tr>
+                    <td>@u.Id</td>
+                    <td>@u.Nombre</td>
+                    <td>@u.Telefono</td>
+                    <td>@u.email</td>
+                    <td>
+                        <div>
+                            <button class="btn btn-warning" @onclick="(()=>Edit(Convert.ToInt32(u.Id)))">Editar</button>
+                            <button class="btn btn-danger" @onclick="(()=>delet(u))">Eliminar</button>
+                        </div>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Usuarios> elusuario = new List<Usuarios>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        elusuario = await http.GetFromJsonAsync<List<Usuarios>>("api/Usuarios");
+    }
+
+    public void nuevousuario()
+    {
+        a.NavigateTo("/Usuario/Nuevo");
+    }
+    private void Edit(int i)
+    {
+        a.NavigateTo($"/Usuario/Edit/{i}");
+    }
+    public async Task delet(Usuarios user)
+    {
+        await http.DeleteAsync($"api/Usuarios/{user.Id}");
+        elusuario.Remove(user);
+    }
+}

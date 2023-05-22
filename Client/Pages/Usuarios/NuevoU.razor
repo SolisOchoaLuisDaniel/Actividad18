@@ -1,0 +1,36 @@
+﻿@page "/Usuario/Nuevo"
+@inject HttpClient http
+@inject NavigationManager a
+@using Actividad18.Shared.Models
+
+
+<h1>Nuevo usuario</h1>
+
+<EditForm Model="elusuario" OnValidSubmit="nuevo">
+    <DataAnnotationsValidator />
+
+    <div class="input-group input-group-sm mb-3">
+        <label for="txtNombre" class="form-label">Nombre: </label>
+        <InputText id="txtNombre" class="form-control" @bind-Value="elusuario.Nombre" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="txtApellido" class="form-label">Apellido: </label>
+        <InputText id="txtApellido" class="form-control" @bind-Value="elusuario.Telefono" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="txtCorreo" class="form-label">Correo: </label>
+        <InputText id="txtCorreo" class="form-control" @bind-Value="elusuario.email" />
+    </div>
+    <button type="submit" class="btn btn-success">Guardar</button>0
+</EditForm>
+
+
+
+@code {
+    private Usuarios elusuario = new Usuarios();
+    private async void nuevo()
+    {
+        await http.PostAsJsonAsync("api/Usuarios", elusuario);
+        a.NavigateTo("/Usuario");
+    }
+}

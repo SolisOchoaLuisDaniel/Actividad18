@@ -1,0 +1,48 @@
+﻿@page "/Libro/Nuevo"
+@inject HttpClient http
+@inject NavigationManager a
+@using Actividad18.Shared.Models
+
+
+<h1>Nuevo usuario</h1>
+
+<EditForm Model="elLibro" OnValidSubmit="nuevo">
+    <DataAnnotationsValidator />
+
+    <div class="input-group input-group-sm mb-3">
+        <label for="txtTitulo" class="form-label">Titulo</label>
+        <InputText id="txtTitulo" class="form-control" @bind-Value="elLibro.titulo" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="txtAutor" class="form-label">Autor</label>
+        <InputText id="txtAutor" class="form-control" @bind-Value="elLibro.autor" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="dtFecha" class="form-label">Fecha</label>
+        <InputDate id="dtFecha" class="form-control" @bind-Value="elLibro.Fecha" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="txtISBN" class="form-label">ISBN</label>
+        <InputText id="txtISBN" class="form-control" @bind-Value="elLibro.ISBN" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="numdisponible" class="form-label">Disponibles</label>
+        <InputNumber id="numdisponible" class="form-control" @bind-Value="elLibro.disponible" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="numdisponible" class="form-label">Id Prestamo</label>
+        <InputNumber id="numdisponible" class="form-control" @bind-Value="elLibro.PrestamosId" />
+    </div>
+    <button type="submit" class="btn btn-success">Guardar</button>
+</EditForm>
+
+
+
+@code {
+    private Libro elLibro = new Libro();
+    private async void nuevo()
+    {
+        await http.PostAsJsonAsync("api/Libros", elLibro);
+        a.NavigateTo("/Libro");
+    }
+}

@@ -1,0 +1,42 @@
+﻿@page "/Usuario/Edit/{id:int}"
+@inject HttpClient http
+@inject NavigationManager a
+@using Actividad18.Shared.Models
+
+<h1>Editar usuario</h1>
+<EditForm Model="elusuario" OnValidSubmit="edit">
+    <DataAnnotationsValidator />
+
+    <div class="input-group input-group-sm mb-3">
+        <label for="txtNombre" class="form-label">Nombre: </label>
+        <InputText id="txtNombre" class="form-control" @bind-Value="elusuario.Nombre" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="txtApellido" class="form-label">Apellido: </label>
+        <InputText id="txtApellido" class="form-control" @bind-Value="elusuario.Telefono" />
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <label for="txtCorreo" class="form-label">Correo: </label>
+        <InputText id="txtCorreo" class="form-control" @bind-Value="elusuario.email" />
+    </div>
+    <button type="submit" class="btn btn-success">Guardar</button>0
+</EditForm>
+
+
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+    private Usuarios elusuario = new Usuarios();
+
+    protected override async Task OnInitializedAsync()
+    {
+        elusuario = await http.GetFromJsonAsync<Usuarios>($"api/Usuarios/{id}");
+    }
+
+    private async void edit()
+    {
+        await http.PutAsJsonAsync($"api/Usuarios/{id}", elusuario);
+        a.NavigateTo("/Usuario");
+    }
+}
